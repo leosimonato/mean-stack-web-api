@@ -1,103 +1,73 @@
-﻿const config = require('config.json');
-const express = require('express');
-const router = express.Router();
-const controleEstoqueService = require('services/controle-estoque.service');
+﻿var config = require('config.json');
+var express = require('express');
+var router = express.Router();
+var userService = require('services/user.service');
 
 // routes
-router.get('/', getAll);
-router.get('/entradas', getAllEntrada);
-router.get('/saidas', getAllSaida);
 router.post('/authenticate', authenticateUser);
-router.post('/create', create);
-router.put('/:_id', edit);
-router.delete('/:_id', _delete);
+router.post('/register', registerUser);
+router.get('/:_id', getCurrentUser);
+router.put('/:_id', updateUser);
+router.delete('/:_id', deleteUser);
 
 module.exports = router;
 
 function authenticateUser(req, res) {
-   controleEstoqueService.authenticate(req.body.username, req.body.password)
-      .then((response) => {
-         if (response) {
-               // authentication successful
-               res.send({ userId: response.userId, token: response.token });
-         } else {
-               // authentication failed
-               res.status(401).send('Username or password is incorrect');
-         }
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
+    userService.authenticate(req.body.username, req.body.password)
+        .then(function (response) {
+            if (response) {
+                // authentication successful
+                res.send({ userId: response.userId, token: response.token });
+            } else {
+                // authentication failed
+                res.status(401).send('Username or password is incorrect');
+            }
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
-function create(req, res) {
-   controleEstoqueService.create(req.body)
-      .then(() => {
-         res.sendStatus(200);
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
+function registerUser(req, res) {
+    userService.create(req.body)
+        .then(function () {
+            res.sendStatus(200);
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
-function getAllEntrada(req, res) {
-   controleEstoqueService.getAllEntrada()
-      .then((movimentacoes) => {
-         if (movimentacoes) {
-               res.send(movimentacoes);
-         } else {
-               res.sendStatus(404);
-         }
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
+function getCurrentUser(req, res) {
+    userService.getById(req.params._id)
+        .then(function (user) {
+            if (user) {
+                res.send(user);
+            } else {
+                res.sendStatus(404);
+            }
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
-function getAll(req, res) {
-   controleEstoqueService.getAll()
-      .then((movimentacoes) => {
-         if (movimentacoes) {
-               res.send(movimentacoes);
-         } else {
-               res.sendStatus(404);
-         }
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
+function updateUser(req, res) {
+    userService.update(req.params._id, req.body)
+        .then(function () {
+            res.sendStatus(200);
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
-function getAllSaida(req, res) {
-   controleEstoqueService.getAllSaida()
-      .then((movimentacoes) => {
-         if (movimentacoes) {
-               res.send(movimentacoes);
-         } else {
-               res.sendStatus(404);
-         }
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
-}
-
-function _delete(req, res) {    
-   controleEstoqueService.delete(req.params._id)
-      .then(() => {
-         res.sendStatus(200);
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
-}
-
-function edit(req, res) {    
-   controleEstoqueService.edit(req.params._id, req.body)
-      .then(() => {
-         res.sendStatus(200);
-      })
-      .catch((err) => {
-         res.status(400).send(err);
-      });
+function deleteUser(req, res) {
+    userService.delete(req.params._id)
+        .then(function () {
+            res.sendStatus(200);
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
