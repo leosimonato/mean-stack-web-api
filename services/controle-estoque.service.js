@@ -43,13 +43,9 @@ function create(movimentacao) {
 
    db.controleEstoque.findOne({
       "codItem":movimentacao.codItem,
-      "dataEntrada":movimentacao.dataEntrada,
       "tipo":movimentacao.tipo,
       "tamanho":movimentacao.tamanho,
-      "cor":movimentacao.cor,
-      "valorEtiqueta":movimentacao.valorEtiqueta,
-      "valorPago":movimentacao.valorPago,
-      "precoSugerido":movimentacao.precoSugerido
+      "cor":movimentacao.cor
    }, (err, movimentacaoBd) => {
       if (err) deferred.reject(err.name + ': ' + err.message);
       
@@ -62,7 +58,7 @@ function create(movimentacao) {
          }
       } else {
          if (movimentacaoBd == null) {
-            deferred.reject("Não há estoque para essa compra!");
+            deferred.reject("Não há produto cadastrado com esses dados!");
          } else {
             const quantidadeNova = movimentacaoBd.quantidade - movimentacao.quantidade;
             
