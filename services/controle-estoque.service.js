@@ -109,6 +109,7 @@ function edit(id, movimentacao, deferredFromOtherFunction) {
       tipo: movimentacao.tipo,
       tamanho: movimentacao.tamanho,
       cor: movimentacao.cor,
+      caracteristicas: movimentacao.caracteristicas,
       valorEtiqueta: movimentacao.valorEtiqueta,
       valorPago: movimentacao.valorPago,
       precoSugerido: movimentacao.precoSugerido,
