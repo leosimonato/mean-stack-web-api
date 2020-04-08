@@ -17,6 +17,7 @@ service.getAllEntrada = getAllEntrada;
 service.getAllSaida = getAllSaida;
 service.getAll = getAll;
 service.edit = edit;
+service.getById = getById;
 
 module.exports = service;
 
@@ -38,6 +39,18 @@ function authenticate(username, password) {
    return deferred.promise;
 }
 
+function getById(_id) {
+   const deferred = Q.defer();
+   
+   db.controleEstoque.findById(_id, (err, produto) => {
+      if (err) deferred.reject(err.name + ': ' + err.message);
+      
+       deferred.resolve(produto);
+   });
+
+   return deferred.promise;
+}
+
 function create(movimentacao) {
    const deferred = Q.defer();
 
@@ -48,7 +61,7 @@ function create(movimentacao) {
       "cor":movimentacao.cor
    }, (err, movimentacaoBd) => {
       if (err) deferred.reject(err.name + ': ' + err.message);
-      
+
       if (movimentacao.tipoTransacao == ENTRADA) {
          if (movimentacaoBd == null) {
             _save(movimentacao);
