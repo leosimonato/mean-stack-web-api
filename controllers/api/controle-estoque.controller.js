@@ -7,6 +7,7 @@ const controleEstoqueService = require('services/controle-estoque.service');
 router.get('/', getAll);
 router.get('/entradas', getAllEntrada);
 router.get('/saidas', getAllSaida);
+router.get('/:_id', getById);
 router.post('/authenticate', authenticateUser);
 router.post('/create', create);
 router.put('/:_id', edit);
@@ -96,6 +97,16 @@ function edit(req, res) {
    controleEstoqueService.edit(req.params._id, req.body)
       .then(() => {
          res.sendStatus(200);
+      })
+      .catch((err) => {
+         res.status(400).send(err);
+      });
+}
+
+function getById(req, res) {    
+   controleEstoqueService.getById(req.params._id)
+      .then((produto) => {
+         res.send(produto);
       })
       .catch((err) => {
          res.status(400).send(err);

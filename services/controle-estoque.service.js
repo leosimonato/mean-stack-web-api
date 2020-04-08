@@ -17,6 +17,7 @@ service.getAllEntrada = getAllEntrada;
 service.getAllSaida = getAllSaida;
 service.getAll = getAll;
 service.edit = edit;
+service.getById = getById;
 
 module.exports = service;
 
@@ -38,21 +39,29 @@ function authenticate(username, password) {
    return deferred.promise;
 }
 
+function getById(_id) {
+   const deferred = Q.defer();
+   
+   db.controleEstoque.findById(_id, (err, produto) => {
+      if (err) deferred.reject(err.name + ': ' + err.message);
+      
+       deferred.resolve(produto);
+   });
+
+   return deferred.promise;
+}
+
 function create(movimentacao) {
    const deferred = Q.defer();
 
    db.controleEstoque.findOne({
       "codItem":movimentacao.codItem,
-      "dataEntrada":movimentacao.dataEntrada,
       "tipo":movimentacao.tipo,
       "tamanho":movimentacao.tamanho,
-      "cor":movimentacao.cor,
-      "valorEtiqueta":movimentacao.valorEtiqueta,
-      "valorPago":movimentacao.valorPago,
-      "precoSugerido":movimentacao.precoSugerido
+      "cor":movimentacao.cor
    }, (err, movimentacaoBd) => {
       if (err) deferred.reject(err.name + ': ' + err.message);
-      
+
       if (movimentacao.tipoTransacao == ENTRADA) {
          if (movimentacaoBd == null) {
             _save(movimentacao);
@@ -62,7 +71,7 @@ function create(movimentacao) {
          }
       } else {
          if (movimentacaoBd == null) {
-            deferred.reject("Não há estoque para essa compra!");
+            deferred.reject("Não há produto cadastrado com esses dados!");
          } else {
             const quantidadeNova = movimentacaoBd.quantidade - movimentacao.quantidade;
             
